@@ -9,12 +9,14 @@ class SuggestionWidget extends StatefulWidget {
   final Function(TextEditingController)? onTap;
   final SuggestionPosition? suggestionPosition;
   final Widget Function(Suggestion)? suggestionCard;
-  SuggestionWidget(
-      {required this.cubit,
-      this.controller,
-      this.onTap,
-      this.suggestionPosition,
-      this.suggestionCard});
+
+  SuggestionWidget({
+    required this.cubit,
+    this.controller,
+    this.onTap,
+    this.suggestionPosition,
+    this.suggestionCard,
+  });
 
   @override
   _SuggestionWidgetState createState() => _SuggestionWidgetState();
@@ -27,11 +29,8 @@ class _SuggestionWidgetState extends State<SuggestionWidget> {
         bloc: widget.cubit,
         builder: (context, provider) {
           var border = BorderSide(
-              width:
-                  Theme.of(context).brightness == Brightness.dark ? 0.1 : 1.0,
-              color: provider.suggestionHeight > 1
-                  ? Colors.grey[200]!
-                  : Colors.transparent);
+              width: Theme.of(context).brightness == Brightness.dark ? 0.1 : 1.0,
+              color: provider.suggestionHeight > 1 ? Colors.grey[200]! : Colors.transparent);
           return Container(
               constraints: BoxConstraints(
                 minHeight: 1,
@@ -41,8 +40,7 @@ class _SuggestionWidgetState extends State<SuggestionWidget> {
               ),
               decoration: BoxDecoration(
                   border: Border(
-                top: widget.suggestionPosition == SuggestionPosition.top &&
-                        provider.suggestionHeight > 1.0
+                top: widget.suggestionPosition == SuggestionPosition.top && provider.suggestionHeight > 1.0
                     ? border
                     : BorderSide.none,
                 left: border,
@@ -53,10 +51,7 @@ class _SuggestionWidgetState extends State<SuggestionWidget> {
                   ? Container(
                       padding: EdgeInsets.symmetric(vertical: 20),
                       child: Center(
-                        child: SizedBox(
-                            width: 30,
-                            height: 30,
-                            child: CircularProgressIndicator()),
+                        child: SizedBox(width: 30, height: 30, child: CircularProgressIndicator()),
                       ))
                   : Scrollbar(
                       thickness: 3,
@@ -72,9 +67,8 @@ class _SuggestionWidgetState extends State<SuggestionWidget> {
                                       subtitle: user.subtitle,
                                       imageUrl: user.imageURL,
                                       onClick: () {
-                                        var _controller = widget.cubit
-                                            .onuserselect('@${user.subtitle} ',
-                                                widget.controller!);
+                                        var _controller =
+                                            widget.cubit.onUserSelect('@${user.subtitle} ', widget.controller!);
                                         widget.onTap!(_controller);
                                       },
                                     );
@@ -86,16 +80,13 @@ class _SuggestionWidgetState extends State<SuggestionWidget> {
                                     var item = provider.hashtags[position];
                                     return ListTile(
                                       onTap: () {
-                                        var _controller = widget.cubit
-                                            .onuserselect('${item.hashtag} ',
-                                                widget.controller!);
+                                        var _controller =
+                                            widget.cubit.onUserSelect('${item.hashtag} ', widget.controller!);
                                         widget.onTap!(_controller);
                                       },
                                       title: Text(
                                         item.hashtag,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .subtitle2,
+                                        style: Theme.of(context).textTheme.subtitle2,
                                       ),
                                       subtitle: Text(item.subtitle ?? ''),
                                       trailing: item.trending
@@ -119,12 +110,7 @@ class ListUserItem extends StatelessWidget {
   final String subtitle;
   final Function()? onClick;
 
-  ListUserItem(
-      {Key? key,
-      required this.imageUrl,
-      required this.title,
-      this.onClick,
-      required this.subtitle});
+  ListUserItem({Key? key, required this.imageUrl, required this.title, this.onClick, required this.subtitle});
 
   @override
   Widget build(BuildContext context) {
@@ -148,10 +134,7 @@ class ListUserItem extends StatelessWidget {
                     Container(
                       child: Text(
                         title.trim(),
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyText1!
-                            .copyWith(fontWeight: FontWeight.w600),
+                        style: Theme.of(context).textTheme.bodyText1!.copyWith(fontWeight: FontWeight.w600),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
@@ -163,10 +146,7 @@ class ListUserItem extends StatelessWidget {
                       child: Text(
                     subtitle,
                     overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context)
-                        .textTheme
-                        .caption!
-                        .copyWith(fontSize: 14),
+                    style: Theme.of(context).textTheme.caption!.copyWith(fontSize: 14),
                   )),
                 ),
                 Container(
