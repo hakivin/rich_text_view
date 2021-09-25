@@ -18,8 +18,8 @@ class SuggestionCubit extends Cubit<SuggestionState> {
 
   void onChanged(
       String? value,
-      List<HashTag>? initalTags,
-      List<Suggestion>? intialMentions,
+      List<HashTag>? initialTags,
+      List<Suggestion>? initialMentions,
       Future<List<HashTag>> Function(String)? onSearchTags,
       Future<List<Suggestion>> Function(String)? onSearchPeople) async {
     var last = value ?? '';
@@ -29,12 +29,12 @@ class SuggestionCubit extends Cubit<SuggestionState> {
     if (last.isNotEmpty && (isHash || isMention)) {
       if (last.length == 1) {
         clear(
-            hash: isMention ? null : initalTags,
-            people: isHash ? null : intialMentions);
+            hash: isMention ? null : initialTags,
+            people: isHash ? null : initialMentions);
       } else if (isMention) {
         var temp = onSearchPeople != null && last.length > 1
             ? await onSearchPeople(last.split('@')[1])
-            : intialMentions?.where((e) => e.title.contains(last)).toList();
+            : initialMentions?.where((e) => e.title.contains(last)).toList();
         clear(
           people: temp ?? [],
         );
@@ -42,7 +42,7 @@ class SuggestionCubit extends Cubit<SuggestionState> {
         await Future.delayed(Duration(milliseconds: 500));
         var temp = onSearchTags != null
             ? await onSearchTags(last)
-            : initalTags?.where((e) => e.hashtag.contains(last)).toList();
+            : initialTags?.where((e) => e.hashtag.contains(last)).toList();
         clear(
           hash: temp,
         );
@@ -61,7 +61,7 @@ class SuggestionCubit extends Cubit<SuggestionState> {
     emit(state.copyWith(loading: value));
   }
 
-  TextEditingController onuserselect(
+  TextEditingController onUserSelect(
       String item, TextEditingController controller) {
     var splits = controller.text.split(' ');
     splits.last = item;

@@ -27,6 +27,10 @@ class RichTextView extends StatefulWidget {
   final TextInputType? keyboardType;
   final FocusNode? focusNode;
   final bool readOnly;
+  final Color? cursorColor;
+  final Widget? prefix;
+  final Widget? suffix;
+  final double? separator;
 
   /// which position to append the suggested list defaults to [SuggestionPosition.bottom].
   final SuggestionPosition? suggestionPosition;
@@ -49,63 +53,79 @@ class RichTextView extends StatefulWidget {
   /// height of the suggestion item
   final double itemHeight;
 
-  RichTextView(
-      {this.text,
-      this.maxLines,
-      this.supportedTypes,
-      this.align,
-      this.style,
-      this.linkStyle,
-      this.boldStyle,
-      this.showMoreText = true,
-      this.selectable = true,
-      this.controller,
-      this.decoration,
-      this.onChanged,
-      this.editable = false,
-      this.autoFocus = false,
-      this.maxLength,
-      this.minLines,
-      this.keyboardType,
-      this.focusNode,
-      this.readOnly = false,
-      this.initialValue,
-      this.suggestionPosition = SuggestionPosition.bottom,
-      this.fontSize,
-      this.onHashTagClicked,
-      this.onMentionClicked,
-      this.onEmailClicked,
-      this.onUrlClicked,
-      this.onBoldClicked,
-      this.onSearchTags,
-      this.onSearchPeople,
-      this.itemHeight = 80,
-      this.hashtagSuggestions = const [],
-      this.mentionSuggestions = const []});
+  RichTextView({
+    this.text,
+    this.maxLines,
+    this.supportedTypes,
+    this.align,
+    this.style,
+    this.linkStyle,
+    this.boldStyle,
+    this.showMoreText = true,
+    this.selectable = true,
+    this.controller,
+    this.decoration,
+    this.onChanged,
+    this.editable = false,
+    this.autoFocus = false,
+    this.maxLength,
+    this.minLines,
+    this.keyboardType,
+    this.focusNode,
+    this.readOnly = false,
+    this.initialValue,
+    this.suggestionPosition = SuggestionPosition.bottom,
+    this.fontSize,
+    this.onHashTagClicked,
+    this.onMentionClicked,
+    this.onEmailClicked,
+    this.onUrlClicked,
+    this.onBoldClicked,
+    this.onSearchTags,
+    this.onSearchPeople,
+    this.itemHeight = 80,
+    this.cursorColor,
+    this.hashtagSuggestions = const [],
+    this.mentionSuggestions = const [],
+    this.prefix,
+    this.suffix,
+    this.separator = 10,
+  });
 
   /// Creates a copy of [RichTextView] but with only the fields needed for
   /// the editor
-  factory RichTextView.editor(
-      {bool readOnly = false,
-      bool autoFocus = false,
-      String? initialValue,
-      TextEditingController? controller,
-      InputDecoration? decoration,
-      Function(String)? onChanged,
-      SuggestionPosition? suggestionPosition,
-      int? maxLength,
-      int? minLines,
-      TextInputType? keyboardType,
-      FocusNode? focusNode,
-      List<HashTag>? hashtagSuggestions,
-      List<Suggestion>? mentionSuggestions,
-      Future<List<HashTag>> Function(String)? onSearchTags,
-      Future<List<Suggestion>> Function(String)? onSearchPeople}) {
+  factory RichTextView.editor({
+    bool readOnly = false,
+    bool autoFocus = false,
+    String? initialValue,
+    TextStyle? style,
+    TextEditingController? controller,
+    InputDecoration? decoration,
+    Function(String)? onChanged,
+    SuggestionPosition? suggestionPosition,
+    int? maxLength,
+    int? minLines,
+    int? maxLines,
+    Color? cursorColor,
+    TextInputType? keyboardType,
+    FocusNode? focusNode,
+    List<HashTag>? hashtagSuggestions,
+    List<Suggestion>? mentionSuggestions,
+    Future<List<HashTag>> Function(String)? onSearchTags,
+    Future<List<Suggestion>> Function(String)? onSearchPeople,
+    Widget? prefix,
+    Widget? suffix,
+    double? separator,
+  }) {
     return RichTextView(
       editable: true,
+      prefix: prefix,
+      suffix: suffix,
+      separator: separator,
       onSearchPeople: onSearchPeople,
       onSearchTags: onSearchTags,
       readOnly: readOnly,
+      style: style,
       suggestionPosition: suggestionPosition,
       autoFocus: autoFocus,
       initialValue: initialValue,
@@ -113,6 +133,8 @@ class RichTextView extends StatefulWidget {
       onChanged: onChanged,
       maxLength: maxLength,
       minLines: minLines,
+      maxLines: maxLines,
+      cursorColor: cursorColor,
       keyboardType: keyboardType,
       focusNode: focusNode,
       decoration: decoration,
@@ -137,8 +159,7 @@ class _RichTextViewState extends State<RichTextView> {
   void initState() {
     super.initState();
     _maxLines = widget.maxLines ?? 2;
-    controller = widget.controller ??
-        TextEditingController(text: widget.initialValue ?? '');
+    controller = widget.controller ?? TextEditingController(text: widget.initialValue ?? '');
     cubit = SuggestionCubit(widget.itemHeight);
   }
 
@@ -148,14 +169,9 @@ class _RichTextViewState extends State<RichTextView> {
 
   @override
   Widget build(BuildContext context) {
-    _style = widget.style ??
-        Theme.of(context)
-            .textTheme
-            .bodyText2!
-            .copyWith(fontSize: widget.fontSize);
+    _style = widget.style ?? Theme.of(context).textTheme.bodyText2!.copyWith(fontSize: widget.fontSize);
 
-    var linkStyle = widget.linkStyle ??
-        _style?.copyWith(color: Theme.of(context).accentColor);
+    var linkStyle = widget.linkStyle ?? _style?.copyWith(color: Theme.of(context).accentColor);
 
     return !widget.editable
         ? Container(
@@ -188,11 +204,9 @@ class _RichTextViewState extends State<RichTextView> {
                   MatchText(
                     type: ParsedType.BOLD,
                     renderText: formatBold,
-                    style: widget.boldStyle ??
-                        widget.style?.copyWith(fontWeight: FontWeight.bold),
+                    style: widget.boldStyle ?? widget.style?.copyWith(fontWeight: FontWeight.bold),
                     onTap: (txt) {
-                      widget.onBoldClicked
-                          ?.call(txt.substring(1, txt.length - 1));
+                      widget.onBoldClicked?.call(txt.substring(1, txt.length - 1));
                     },
                   ),
                   MatchText(
@@ -222,45 +236,54 @@ class _RichTextViewState extends State<RichTextView> {
                   SuggestionWidget(
                     cubit: cubit,
                     controller: controller,
-                    onTap: (contrl) {
+                    onTap: (control) {
                       setState(() {
-                        controller = contrl;
+                        controller = control;
                       });
                     },
                   ),
                 BlocBuilder<SuggestionCubit, SuggestionState>(
                     bloc: cubit,
                     builder: (context, provider) {
-                      return TextFormField(
-                          style: widget.style,
-                          focusNode: widget.focusNode,
-                          controller: controller,
-                          textCapitalization: TextCapitalization.sentences,
-                          readOnly: widget.readOnly,
-                          onChanged: (val) async {
-                            widget.onChanged?.call(val);
-                            cubit.onChanged(
-                                val.split(' ').last.toLowerCase(),
-                                widget.hashtagSuggestions,
-                                widget.mentionSuggestions,
-                                widget.onSearchTags,
-                                widget.onSearchPeople);
-                          },
-                          maxLines: widget.maxLines,
-                          keyboardType: widget.keyboardType,
-                          maxLength: widget.maxLength,
-                          minLines: widget.minLines,
-                          autofocus: widget.autoFocus,
-                          maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                          decoration: widget.decoration);
+                      return Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          widget.prefix ?? SizedBox(),
+                          SizedBox(width: widget.separator),
+                          Expanded(
+                            child: TextFormField(
+                              style: widget.style,
+                              focusNode: widget.focusNode,
+                              controller: controller,
+                              textCapitalization: TextCapitalization.sentences,
+                              readOnly: widget.readOnly,
+                              onChanged: (val) async {
+                                widget.onChanged?.call(val);
+                                cubit.onChanged(val.split(' ').last.toLowerCase(), widget.hashtagSuggestions,
+                                    widget.mentionSuggestions, widget.onSearchTags, widget.onSearchPeople);
+                              },
+                              keyboardType: widget.keyboardType,
+                              maxLength: widget.maxLength,
+                              minLines: widget.minLines,
+                              maxLines: widget.maxLines,
+                              autofocus: widget.autoFocus,
+                              maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                              decoration: widget.decoration,
+                              cursorColor: widget.cursorColor,
+                            ),
+                          ),
+                          SizedBox(width: widget.separator),
+                          widget.suffix ?? SizedBox(),
+                        ],
+                      );
                     }),
                 if (widget.suggestionPosition == SuggestionPosition.bottom)
                   SuggestionWidget(
                     cubit: cubit,
                     controller: controller,
-                    onTap: (contrl) {
+                    onTap: (control) {
                       setState(() {
-                        controller = contrl;
+                        controller = control;
                       });
                     },
                   ),
