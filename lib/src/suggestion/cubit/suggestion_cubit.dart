@@ -61,11 +61,15 @@ class SuggestionCubit extends Cubit<SuggestionState> {
   }
 
   TextEditingController onUserSelect(String item, TextEditingController controller) {
-    var splits = controller.text.split('\n').last.split(' ');
-    splits.last = item;
+    var lines = controller.text.split('\n');
+    var words = lines.last.split(' ');
+    words.last = item;
+    var lastLine = words.join(' ');
+    lines.removeLast();
+    lines.add(lastLine);
     controller.value = TextEditingValue(
-      text: splits.join(' '),
-      selection: TextSelection.collapsed(offset: splits.join(' ').length),
+      text: lines.join('\n'),
+      selection: TextSelection.collapsed(offset: words.join(' ').length),
     );
 
     suggestionHeight = 1;
