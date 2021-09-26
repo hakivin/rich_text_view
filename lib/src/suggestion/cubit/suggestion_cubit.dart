@@ -69,7 +69,7 @@ class SuggestionCubit extends Cubit<SuggestionState> {
     lines.add(lastLine);
     controller.value = TextEditingValue(
       text: lines.join('\n'),
-      selection: TextSelection.fromPosition(TextPosition(offset: controller.text.length)),
+      selection: TextSelection.collapsed(offset: lines.join('\n').length),
     );
 
     suggestionHeight = 1;
