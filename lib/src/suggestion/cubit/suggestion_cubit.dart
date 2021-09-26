@@ -6,6 +6,7 @@ part 'suggestion_state.dart';
 
 class SuggestionCubit extends Cubit<SuggestionState> {
   final double itemHeight;
+
   SuggestionCubit(this.itemHeight) : super(SuggestionState());
 
   set suggestions(List<Suggestion> value) {
@@ -28,13 +29,11 @@ class SuggestionCubit extends Cubit<SuggestionState> {
     var isMention = last.startsWith('@');
     if (last.isNotEmpty && (isHash || isMention)) {
       if (last.length == 1) {
-        clear(
-            hash: isMention ? null : initialTags,
-            people: isHash ? null : initialMentions);
+        clear(hash: isMention ? null : initialTags, people: isHash ? null : initialMentions);
       } else if (isMention) {
         var temp = onSearchPeople != null && last.length > 1
             ? await onSearchPeople(last.split('@')[1])
-            : initialMentions?.where((e) => e.title.contains(last)).toList();
+            : initialMentions?.where((e) => e.subtitle.contains(last)).toList();
         clear(
           people: temp ?? [],
         );
@@ -61,13 +60,13 @@ class SuggestionCubit extends Cubit<SuggestionState> {
     emit(state.copyWith(loading: value));
   }
 
-  TextEditingController onUserSelect(
-      String item, TextEditingController controller) {
-    var splits = controller.text.split(' ');
+  TextEditingController onUserSelect(String item, TextEditingController controller) {
+    var splits = controller.text.split('\n').last.split(' ');
     splits.last = item;
     controller.value = TextEditingValue(
-        text: splits.join(' '),
-        selection: TextSelection.collapsed(offset: splits.join(' ').length));
+      text: splits.join(' '),
+      selection: TextSelection.collapsed(offset: splits.join(' ').length),
+    );
 
     suggestionHeight = 1;
     hashtags = [];
@@ -75,8 +74,7 @@ class SuggestionCubit extends Cubit<SuggestionState> {
     return controller;
   }
 
-  void clear(
-      {List<HashTag>? hash, List<Suggestion>? people, bool load = false}) {
+  void clear({List<HashTag>? hash, List<Suggestion>? people, bool load = false}) {
     loading = load;
     suggestions = people ?? [];
     hashtags = hash ?? [];
