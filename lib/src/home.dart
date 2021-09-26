@@ -34,6 +34,8 @@ class RichTextView extends StatefulWidget {
   final Decoration? containerDecoration;
   final EdgeInsetsGeometry? containerPadding;
   final double? containerWidth;
+  final TextStyle? titleStyle;
+  final TextStyle? subtitleStyle;
 
   /// which position to append the suggested list defaults to [SuggestionPosition.bottom].
   final SuggestionPosition? suggestionPosition;
@@ -97,6 +99,8 @@ class RichTextView extends StatefulWidget {
     this.containerDecoration,
     this.containerPadding,
     this.containerWidth,
+    this.titleStyle,
+    this.subtitleStyle,
   }) : super(key: key);
 
   /// Creates a copy of [RichTextView] but with only the fields needed for
@@ -127,6 +131,8 @@ class RichTextView extends StatefulWidget {
     Decoration? containerDecoration,
     EdgeInsetsGeometry? containerPadding,
     double? containerWidth,
+    TextStyle? titleStyle,
+    TextStyle? subtitleStyle,
   }) {
     return RichTextView(
       key: key,
@@ -155,6 +161,8 @@ class RichTextView extends StatefulWidget {
       containerDecoration: containerDecoration,
       containerPadding: containerPadding,
       containerWidth: containerWidth,
+      titleStyle: titleStyle,
+      subtitleStyle: subtitleStyle,
     );
   }
 
@@ -251,6 +259,8 @@ class _RichTextViewState extends State<RichTextView> {
                   SuggestionWidget(
                     cubit: cubit,
                     controller: controller,
+                    titleStyle: widget.titleStyle,
+                    subtitleStyle: widget.subtitleStyle,
                     onTap: (control) {
                       setState(() {
                         controller = control;
@@ -279,8 +289,13 @@ class _RichTextViewState extends State<RichTextView> {
                                 readOnly: widget.readOnly,
                                 onChanged: (val) async {
                                   widget.onChanged?.call(val);
-                                  cubit.onChanged(val.split(' ').last.toLowerCase(), widget.hashtagSuggestions,
-                                      widget.mentionSuggestions, widget.onSearchTags, widget.onSearchPeople);
+                                  cubit.onChanged(
+                                    val.split('\n').last.split(' ').last.toLowerCase(),
+                                    widget.hashtagSuggestions,
+                                    widget.mentionSuggestions,
+                                    widget.onSearchTags,
+                                    widget.onSearchPeople,
+                                  );
                                 },
                                 keyboardType: widget.keyboardType,
                                 maxLength: widget.maxLength,

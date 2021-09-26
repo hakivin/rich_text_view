@@ -7,12 +7,13 @@ class SuggestionState<T> {
   final double suggestionHeight;
   final bool loading;
 
-  SuggestionState(
-      {this.hashtags = const [],
-      this.suggestions = const [],
-      this.last = '',
-      this.suggestionHeight = 1,
-      this.loading = false});
+  SuggestionState({
+    this.hashtags = const [],
+    this.suggestions = const [],
+    this.last = '',
+    this.suggestionHeight = 1,
+    this.loading = false,
+  });
 
   SuggestionState<Suggestion> copyWith(
       {final List<HashTag>? hashtags,

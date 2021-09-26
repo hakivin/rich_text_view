@@ -9,6 +9,8 @@ class SuggestionWidget extends StatefulWidget {
   final Function(TextEditingController)? onTap;
   final SuggestionPosition? suggestionPosition;
   final Widget Function(Suggestion)? suggestionCard;
+  final TextStyle? titleStyle;
+  final TextStyle? subtitleStyle;
 
   SuggestionWidget({
     required this.cubit,
@@ -16,6 +18,8 @@ class SuggestionWidget extends StatefulWidget {
     this.onTap,
     this.suggestionPosition,
     this.suggestionCard,
+    this.titleStyle,
+    this.subtitleStyle,
   });
 
   @override
@@ -67,9 +71,11 @@ class _SuggestionWidgetState extends State<SuggestionWidget> {
                                       name: user.subtitle,
                                       backgroundColor: Color(0xFF1F2329),
                                       fullName: user.title,
+                                      nameStyle: widget.subtitleStyle,
+                                      fullNameStyle: widget.titleStyle,
                                       onTap: () {
                                         var _controller =
-                                        widget.cubit.onUserSelect('@${user.subtitle} ', widget.controller!);
+                                            widget.cubit.onUserSelect('@${user.subtitle} ', widget.controller!);
                                         widget.onTap!(_controller);
                                       },
                                     );
@@ -200,11 +206,12 @@ class MemberItem extends StatelessWidget {
             children: [
               Container(
                 decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: Colors.white,
-                      width: 2.0,
-                    )),
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.white,
+                    width: 2.0,
+                  ),
+                ),
                 child: CircleAvatar(
                   radius: 20,
                   backgroundImage: NetworkImage(
