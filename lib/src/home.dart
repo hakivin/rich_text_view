@@ -31,6 +31,9 @@ class RichTextView extends StatefulWidget {
   final Widget? prefix;
   final Widget? suffix;
   final double? separator;
+  final Decoration? containerDecoration;
+  final EdgeInsetsGeometry? containerPadding;
+  final double? containerWidth;
 
   /// which position to append the suggested list defaults to [SuggestionPosition.bottom].
   final SuggestionPosition? suggestionPosition;
@@ -54,6 +57,7 @@ class RichTextView extends StatefulWidget {
   final double itemHeight;
 
   RichTextView({
+    Key? key,
     this.text,
     this.maxLines,
     this.supportedTypes,
@@ -90,11 +94,15 @@ class RichTextView extends StatefulWidget {
     this.prefix,
     this.suffix,
     this.separator = 10,
-  });
+    this.containerDecoration,
+    this.containerPadding,
+    this.containerWidth,
+  }) : super(key: key);
 
   /// Creates a copy of [RichTextView] but with only the fields needed for
   /// the editor
   factory RichTextView.editor({
+    Key? key,
     bool readOnly = false,
     bool autoFocus = false,
     String? initialValue,
@@ -115,9 +123,13 @@ class RichTextView extends StatefulWidget {
     Future<List<Suggestion>> Function(String)? onSearchPeople,
     Widget? prefix,
     Widget? suffix,
-    double? separator,
+    double? separator = 10,
+    Decoration? containerDecoration,
+    EdgeInsetsGeometry? containerPadding,
+    double? containerWidth,
   }) {
     return RichTextView(
+      key: key,
       editable: true,
       prefix: prefix,
       suffix: suffix,
@@ -140,6 +152,9 @@ class RichTextView extends StatefulWidget {
       decoration: decoration,
       hashtagSuggestions: hashtagSuggestions,
       mentionSuggestions: mentionSuggestions,
+      containerDecoration: containerDecoration,
+      containerPadding: containerPadding,
+      containerWidth: containerWidth,
     );
   }
 
@@ -245,36 +260,42 @@ class _RichTextViewState extends State<RichTextView> {
                 BlocBuilder<SuggestionCubit, SuggestionState>(
                     bloc: cubit,
                     builder: (context, provider) {
-                      return Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          widget.prefix ?? SizedBox(),
-                          SizedBox(width: widget.separator),
-                          Expanded(
-                            child: TextFormField(
-                              style: widget.style,
-                              focusNode: widget.focusNode,
-                              controller: controller,
-                              textCapitalization: TextCapitalization.sentences,
-                              readOnly: widget.readOnly,
-                              onChanged: (val) async {
-                                widget.onChanged?.call(val);
-                                cubit.onChanged(val.split(' ').last.toLowerCase(), widget.hashtagSuggestions,
-                                    widget.mentionSuggestions, widget.onSearchTags, widget.onSearchPeople);
-                              },
-                              keyboardType: widget.keyboardType,
-                              maxLength: widget.maxLength,
-                              minLines: widget.minLines,
-                              maxLines: widget.maxLines,
-                              autofocus: widget.autoFocus,
-                              maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                              decoration: widget.decoration,
-                              cursorColor: widget.cursorColor,
+                      return Container(
+                        key: widget.key,
+                        decoration: widget.containerDecoration,
+                        padding: widget.containerPadding,
+                        width: widget.containerWidth,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            widget.prefix ?? SizedBox(),
+                            SizedBox(width: widget.separator),
+                            Expanded(
+                              child: TextFormField(
+                                style: widget.style,
+                                focusNode: widget.focusNode,
+                                controller: controller,
+                                textCapitalization: TextCapitalization.sentences,
+                                readOnly: widget.readOnly,
+                                onChanged: (val) async {
+                                  widget.onChanged?.call(val);
+                                  cubit.onChanged(val.split(' ').last.toLowerCase(), widget.hashtagSuggestions,
+                                      widget.mentionSuggestions, widget.onSearchTags, widget.onSearchPeople);
+                                },
+                                keyboardType: widget.keyboardType,
+                                maxLength: widget.maxLength,
+                                minLines: widget.minLines,
+                                maxLines: widget.maxLines,
+                                autofocus: widget.autoFocus,
+                                maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                                decoration: widget.decoration,
+                                cursorColor: widget.cursorColor,
+                              ),
                             ),
-                          ),
-                          SizedBox(width: widget.separator),
-                          widget.suffix ?? SizedBox(),
-                        ],
+                            SizedBox(width: widget.separator),
+                            widget.suffix ?? SizedBox(),
+                          ],
+                        ),
                       );
                     }),
                 if (widget.suggestionPosition == SuggestionPosition.bottom)
