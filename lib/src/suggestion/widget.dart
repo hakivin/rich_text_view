@@ -62,13 +62,14 @@ class _SuggestionWidgetState extends State<SuggestionWidget> {
                                 var user = provider.suggestions[index];
                                 if (user == null) return Container();
                                 return widget.suggestionCard?.call(user) ??
-                                    ListUserItem(
-                                      title: user.title,
-                                      subtitle: user.subtitle,
-                                      imageUrl: user.imageURL,
-                                      onClick: () {
+                                    MemberItem(
+                                      avatar: user.imageURL,
+                                      name: user.subtitle,
+                                      backgroundColor: Color(0xFF1F2329),
+                                      fullName: user.title,
+                                      onTap: () {
                                         var _controller =
-                                            widget.cubit.onUserSelect('@${user.subtitle} ', widget.controller!);
+                                        widget.cubit.onUserSelect('@${user.subtitle} ', widget.controller!);
                                         widget.onTap!(_controller);
                                       },
                                     );
@@ -110,7 +111,13 @@ class ListUserItem extends StatelessWidget {
   final String subtitle;
   final Function()? onClick;
 
-  ListUserItem({Key? key, required this.imageUrl, required this.title, this.onClick, required this.subtitle});
+  ListUserItem({
+    Key? key,
+    required this.imageUrl,
+    required this.title,
+    this.onClick,
+    required this.subtitle,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -156,6 +163,84 @@ class ListUserItem extends StatelessWidget {
             ),
           )),
         ]),
+      ),
+    );
+  }
+}
+
+class MemberItem extends StatelessWidget {
+  final String avatar;
+  final String name;
+  final String fullName;
+  final Color backgroundColor;
+  final void Function()? onTap;
+  final TextStyle? nameStyle;
+  final TextStyle? fullNameStyle;
+
+  const MemberItem({
+    required this.avatar,
+    required this.name,
+    required this.backgroundColor,
+    required this.fullName,
+    this.onTap,
+    this.nameStyle,
+    this.fullNameStyle,
+  }) : super();
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 14),
+        color: backgroundColor,
+        child: Container(
+          padding: EdgeInsets.all(8),
+          child: Row(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.white,
+                      width: 2.0,
+                    )),
+                child: CircleAvatar(
+                  radius: 20,
+                  backgroundImage: NetworkImage(
+                    avatar,
+                  ),
+                  backgroundColor: Colors.transparent,
+                ),
+              ),
+              SizedBox(
+                width: 12,
+              ),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    RichText(
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      text: TextSpan(
+                        text: fullName,
+                        style: fullNameStyle,
+                      ),
+                    ),
+                    Text(
+                      name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: nameStyle,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
