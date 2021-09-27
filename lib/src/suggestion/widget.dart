@@ -32,25 +32,14 @@ class _SuggestionWidgetState extends State<SuggestionWidget> {
     return BlocBuilder<SuggestionCubit, SuggestionState>(
         bloc: widget.cubit,
         builder: (context, provider) {
-          var border = BorderSide(
-              width: Theme.of(context).brightness == Brightness.dark ? 0.1 : 1.0,
-              color: provider.suggestionHeight > 1 ? Colors.grey[200]! : Colors.transparent);
           return Container(
+              color: Color(0xFF1F2329),
               constraints: BoxConstraints(
                 minHeight: 1,
                 maxHeight: provider.suggestionHeight,
                 maxWidth: double.infinity,
                 minWidth: double.infinity,
               ),
-              decoration: BoxDecoration(
-                  border: Border(
-                top: widget.suggestionPosition == SuggestionPosition.top && provider.suggestionHeight > 1.0
-                    ? border
-                    : BorderSide.none,
-                left: border,
-                right: border,
-                bottom: border,
-              )),
               child: provider.loading
                   ? Container(
                       padding: EdgeInsets.symmetric(vertical: 20),
