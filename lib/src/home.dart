@@ -263,6 +263,7 @@ class _RichTextViewState extends State<RichTextView> {
                 controller: controller,
                 titleStyle: widget.titleStyle,
                 subtitleStyle: widget.subtitleStyle,
+                backgroundColor: widget.backgroundColor,
                 onTap: (control) {
                   setState(() {
                     controller = control;
@@ -319,6 +320,9 @@ class _RichTextViewState extends State<RichTextView> {
               SuggestionWidget(
                 cubit: cubit,
                 controller: controller,
+                titleStyle: widget.titleStyle,
+                subtitleStyle: widget.subtitleStyle,
+                backgroundColor: widget.backgroundColor,
                 onTap: (control) {
                   setState(() {
                     controller = control;
