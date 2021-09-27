@@ -254,81 +254,78 @@ class _RichTextViewState extends State<RichTextView> {
                 ],
                 maxLines: _maxLines,
                 style: _style))
-        : Padding(
-            padding: const EdgeInsets.only(top: 16.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                if (widget.suggestionPosition == SuggestionPosition.top)
-                  SuggestionWidget(
-                    cubit: cubit,
-                    controller: controller,
-                    titleStyle: widget.titleStyle,
-                    subtitleStyle: widget.subtitleStyle,
-                    onTap: (control) {
-                      setState(() {
-                        controller = control;
-                      });
-                    },
-                  ),
-                BlocBuilder<SuggestionCubit, SuggestionState>(
-                    bloc: cubit,
-                    builder: (context, provider) {
-                      return Container(
-                        key: widget.key,
-                        decoration: widget.containerDecoration,
-                        padding: widget.containerPadding,
-                        width: widget.containerWidth,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            widget.prefix ?? SizedBox(),
-                            SizedBox(width: widget.separator),
-                            Expanded(
-                              child: TextFormField(
-                                style: widget.style,
-                                focusNode: widget.focusNode,
-                                controller: controller,
-                                textCapitalization: TextCapitalization.sentences,
-                                readOnly: widget.readOnly,
-                                onChanged: (val) async {
-                                  widget.onChanged?.call(val);
-                                  cubit.onChanged(
-                                    val.split('\n').last.split(' ').last.toLowerCase(),
-                                    widget.hashtagSuggestions,
-                                    widget.mentionSuggestions,
-                                    widget.onSearchTags,
-                                    widget.onSearchPeople,
-                                  );
-                                },
-                                keyboardType: widget.keyboardType,
-                                maxLength: widget.maxLength,
-                                minLines: widget.minLines,
-                                maxLines: widget.maxLines,
-                                autofocus: widget.autoFocus,
-                                maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                                decoration: widget.decoration,
-                                cursorColor: widget.cursorColor,
-                              ),
-                            ),
-                            SizedBox(width: widget.separator),
-                            widget.suffix ?? SizedBox(),
-                          ],
+        : Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            if (widget.suggestionPosition == SuggestionPosition.top)
+              SuggestionWidget(
+                cubit: cubit,
+                controller: controller,
+                titleStyle: widget.titleStyle,
+                subtitleStyle: widget.subtitleStyle,
+                onTap: (control) {
+                  setState(() {
+                    controller = control;
+                  });
+                },
+              ),
+            BlocBuilder<SuggestionCubit, SuggestionState>(
+                bloc: cubit,
+                builder: (context, provider) {
+                  return Container(
+                    key: widget.key,
+                    decoration: widget.containerDecoration,
+                    padding: widget.containerPadding,
+                    width: widget.containerWidth,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        widget.prefix ?? SizedBox(),
+                        SizedBox(width: widget.separator),
+                        Expanded(
+                          child: TextFormField(
+                            style: widget.style,
+                            focusNode: widget.focusNode,
+                            controller: controller,
+                            textCapitalization: TextCapitalization.sentences,
+                            readOnly: widget.readOnly,
+                            onChanged: (val) async {
+                              widget.onChanged?.call(val);
+                              cubit.onChanged(
+                                val.split('\n').last.split(' ').last.toLowerCase(),
+                                widget.hashtagSuggestions,
+                                widget.mentionSuggestions,
+                                widget.onSearchTags,
+                                widget.onSearchPeople,
+                              );
+                            },
+                            keyboardType: widget.keyboardType,
+                            maxLength: widget.maxLength,
+                            minLines: widget.minLines,
+                            maxLines: widget.maxLines,
+                            autofocus: widget.autoFocus,
+                            maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                            decoration: widget.decoration,
+                            cursorColor: widget.cursorColor,
+                          ),
                         ),
-                      );
-                    }),
-                if (widget.suggestionPosition == SuggestionPosition.bottom)
-                  SuggestionWidget(
-                    cubit: cubit,
-                    controller: controller,
-                    onTap: (control) {
-                      setState(() {
-                        controller = control;
-                      });
-                    },
-                  ),
-              ],
-            ),
-          );
+                        SizedBox(width: widget.separator),
+                        widget.suffix ?? SizedBox(),
+                      ],
+                    ),
+                  );
+                }),
+            if (widget.suggestionPosition == SuggestionPosition.bottom)
+              SuggestionWidget(
+                cubit: cubit,
+                controller: controller,
+                onTap: (control) {
+                  setState(() {
+                    controller = control;
+                  });
+                },
+              ),
+          ],
+        );
   }
 }
