@@ -36,6 +36,7 @@ class RichTextView extends StatefulWidget {
   final double? containerWidth;
   final TextStyle? titleStyle;
   final TextStyle? subtitleStyle;
+  final Color? backgroundColor;
 
   /// which position to append the suggested list defaults to [SuggestionPosition.bottom].
   final SuggestionPosition? suggestionPosition;
@@ -101,6 +102,7 @@ class RichTextView extends StatefulWidget {
     this.containerWidth,
     this.titleStyle,
     this.subtitleStyle,
+    this.backgroundColor,
   }) : super(key: key);
 
   /// Creates a copy of [RichTextView] but with only the fields needed for
@@ -133,6 +135,7 @@ class RichTextView extends StatefulWidget {
     double? containerWidth,
     TextStyle? titleStyle,
     TextStyle? subtitleStyle,
+    Color? backgroundColor,
   }) {
     return RichTextView(
       key: key,
@@ -163,6 +166,7 @@ class RichTextView extends StatefulWidget {
       containerWidth: containerWidth,
       titleStyle: titleStyle,
       subtitleStyle: subtitleStyle,
+      backgroundColor: backgroundColor,
     );
   }
 
@@ -194,7 +198,7 @@ class _RichTextViewState extends State<RichTextView> {
   Widget build(BuildContext context) {
     _style = widget.style ?? Theme.of(context).textTheme.bodyText2!.copyWith(fontSize: widget.fontSize);
 
-    var linkStyle = widget.linkStyle ?? _style?.copyWith(color: Theme.of(context).accentColor);
+    var linkStyle = widget.linkStyle ?? _style?.copyWith(color: Colors.lightBlueAccent);
 
     return !widget.editable
         ? Container(

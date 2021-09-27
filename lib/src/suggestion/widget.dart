@@ -11,6 +11,7 @@ class SuggestionWidget extends StatefulWidget {
   final Widget Function(Suggestion)? suggestionCard;
   final TextStyle? titleStyle;
   final TextStyle? subtitleStyle;
+  final Color? backgroundColor;
 
   SuggestionWidget({
     required this.cubit,
@@ -20,6 +21,7 @@ class SuggestionWidget extends StatefulWidget {
     this.suggestionCard,
     this.titleStyle,
     this.subtitleStyle,
+    this.backgroundColor,
   });
 
   @override
@@ -33,7 +35,7 @@ class _SuggestionWidgetState extends State<SuggestionWidget> {
         bloc: widget.cubit,
         builder: (context, provider) {
           return Container(
-              color: Color(0xFF1F2329),
+              color: widget.backgroundColor,
               constraints: BoxConstraints(
                 minHeight: 1,
                 maxHeight: provider.suggestionHeight,
@@ -58,7 +60,7 @@ class _SuggestionWidgetState extends State<SuggestionWidget> {
                                     MemberItem(
                                       avatar: user.imageURL,
                                       name: user.subtitle,
-                                      backgroundColor: Color(0xFF1F2329),
+                                      backgroundColor: widget.backgroundColor ?? Color(0xFF1F2329),
                                       fullName: user.title,
                                       nameStyle: widget.subtitleStyle,
                                       fullNameStyle: widget.titleStyle,
